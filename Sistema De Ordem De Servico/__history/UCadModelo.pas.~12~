@@ -1,0 +1,71 @@
+unit UCadModelo;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ExtCtrls, Vcl.DBCtrls,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons;
+
+type
+  TFrmCadModelo = class(TForm)
+    TabCadastro: TPageControl;
+    CadModelo: TTabSheet;
+    Pesquisa: TTabSheet;
+    DBNavigator1: TDBNavigator;
+    pngBotoes: TPanel;
+    pngItens: TPanel;
+    dsModelo: TDataSource;
+    Modelo: TFDQuery;
+    ModeloCOD_MODELO: TIntegerField;
+    ModeloDESCRICAO: TStringField;
+    ModeloFABRICANTE: TStringField;
+    Label1: TLabel;
+    txtCodigo: TDBEdit;
+    Label2: TLabel;
+    txtDescricao: TDBEdit;
+    Label3: TLabel;
+    txtFabricante: TDBEdit;
+    cmdNovo: TBitBtn;
+    cmdAltera: TBitBtn;
+    cmdConfirma: TBitBtn;
+    cmdCancela: TBitBtn;
+    cmdExclui: TBitBtn;
+    cmdSair: TBitBtn;
+    procedure FormCreate(Sender: TObject);
+    procedure Habilita(wStatus:boolean);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmCadModelo: TFrmCadModelo;
+
+implementation
+
+{$R *.dfm}
+
+uses UFuncoes, UDMDados;
+
+procedure TFrmCadModelo.FormCreate(Sender: TObject);
+begin
+  Modelo.Open();
+end;
+
+procedure TFrmCadModelo.Habilita(wStatus: boolean);
+begin
+//cmdNovo.Enabled               :=wStatus;
+//  cmdAltera.Enabled             :=wStatus;
+//  cmdExclui.Enabled             :=wStatus;
+//  cmdConfirma.Enabled           :=not wStatus;
+//  cmdCancela.Enabled            :=not wStatus;
+//  txtDescricao.Enabled          :=not wStatus;
+//  txtVlr_unitario.Enabled       :=not wStatus;
+end;
+
+end.

@@ -1,0 +1,103 @@
+unit Unit1;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.Grids, Vcl.DBGrids,
+  Vcl.StdCtrls, Vcl.DBCtrls, Datasnap.DBClient;
+
+type
+  TForm1 = class(TForm)
+    DBCheckBox1: TDBCheckBox;
+    DBGrid1: TDBGrid;
+    FDQuery1: TFDQuery;
+    DataSource1: TDataSource;
+    FDQuery1COD_PRODUTO: TIntegerField;
+    FDQuery1DESCRICAO: TStringField;
+    FDQuery1VLR_UNITARIO: TFMTBCDField;
+    FDQuery1FLG_ATIVO: TStringField;
+    FDQuery1winner: TBooleanField;
+    ClientDataSet1: TClientDataSet;
+    ClientDataSet1nome: TStringField;
+    ClientDataSet1winner: TBooleanField;
+    procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure FormShow(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.dfm}
+
+uses Umenu, UDMDados;
+
+procedure TForm1.DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect;
+  DataCol: Integer; Column: TColumn; State: TGridDrawState);
+
+
+
+
+ var
+  Check: Integer;
+  R: TRect;
+begin
+  inherited;
+
+  if ((Sender as TDBGrid).DataSource.Dataset.IsEmpty) then
+    Exit;
+
+  // Desenha um checkbox no dbgrid
+  if Column.FieldName = 'winner' then
+  begin
+    TDBGrid(Sender).Canvas.FillRect(Rect);
+
+    if ((Sender as TDBGrid).DataSource.Dataset.FieldByName('winner').Value = False) then
+      Check := DFCS_CHECKED
+    else
+      Check := 0;
+
+    R := Rect;
+    InflateRect(R, -2, -2); { Diminue o tamanho do CheckBox }
+    DrawFrameControl(TDBGrid(Sender).Canvas.Handle, R, DFC_BUTTON,
+      DFCS_BUTTONCHECK or Check);
+  end;
+ end;
+
+
+procedure TForm1.FormShow(Sender: TObject);
+begin
+  FDQuery1.First;
+  with ClientDataSet1 do
+    begin
+      CreateDataSet;
+       open;
+      while not FDQuery1.Eof do
+      begin
+      Append;
+      ClientDataSet1nome.AsString := FDQuery1DESCRICAO.AsString;
+      ClientDataSet1winner.Value  := False;
+      post;
+      FDQuery1.next;
+      end;
+
+    end;
+
+  DBCheckBox1.DataSource := DataSource1;
+  DBCheckBox1.DataField := 'Winner';
+  DBCheckBox1.Visible := False;
+  DBCheckBox1.Color := DBGrid1.Color;
+  DBCheckBox1.Caption := '';
+end;
+
+end.

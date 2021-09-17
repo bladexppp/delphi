@@ -1,0 +1,126 @@
+unit Unit1;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.Grids, Vcl.DBGrids,
+  Vcl.StdCtrls, Vcl.DBCtrls, Datasnap.DBClient;
+
+type
+  TForm1 = class(TForm)
+    DBCheckBox1: TDBCheckBox;
+    DBGrid1: TDBGrid;
+    FDQuery1: TFDQuery;
+    DataSource1: TDataSource;
+    FDQuery1COD_PRODUTO: TIntegerField;
+    FDQuery1DESCRICAO: TStringField;
+    FDQuery1VLR_UNITARIO: TFMTBCDField;
+    FDQuery1FLG_ATIVO: TStringField;
+    FDQuery1winner: TBooleanField;
+    ClientDataSet1: TClientDataSet;
+    ClientDataSet1nome: TStringField;
+    ClientDataSet1winner: TBooleanField;
+    procedure DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure DBGrid1ColExit(Sender: TObject);
+    procedure DBGrid1KeyPress(Sender: TObject; var Key: Char);
+    procedure FormShow(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form1: TForm1;
+
+implementation
+
+{$R *.dfm}
+
+uses Umenu, UDMDados;
+
+procedure TForm1.DBGrid1ColExit(Sender: TObject);
+begin
+  if DBGrid1.SelectedField.FieldName = DBCheckBox1.DataField then
+    DBCheckBox1.Visible := False
+end;
+
+procedure TForm1.DBGrid1DrawColumnCell(Sender: TObject; const Rect: TRect;
+  DataCol: Integer; Column: TColumn; State: TGridDrawState);
+
+
+ const IsChecked : array[Boolean] of Integer =
+       (DFCS_BUTTONCHECK, DFCS_BUTTONCHECK or DFCS_CHECKED);
+
+ var
+   DrawState: Integer;
+   DrawRect: TRect;
+ begin
+   if (gdFocused in State) then
+   begin
+     if (Column.Field.FieldName = DBCheckBox1.DataField) then
+     begin
+      DBCheckBox1.Left := Rect.Left + DBGrid1.Left + 2;
+      DBCheckBox1.Top := Rect.Top + DBGrid1.top + 2;
+      DBCheckBox1.Width := Rect.Right - Rect.Left;
+      DBCheckBox1.Height := Rect.Bottom - Rect.Top;
+      DBCheckBox1.Visible := True;
+     end
+   end
+   else
+   begin
+     if (Column.Field.FieldName = DBCheckBox1.DataField) then
+     begin
+       DrawRect:=Rect;
+       InflateRect(DrawRect,-1,-1);
+       DrawState := ISChecked[Column.Field.AsBoolean];
+       DBGrid1.Canvas.FillRect(Rect);
+       DrawFrameControl(DBGrid1.Canvas.Handle, DrawRect,
+         DFC_BUTTON, DrawState);
+     end;
+   end;
+ end;
+
+
+procedure TForm1.DBGrid1KeyPress(Sender: TObject; var Key: Char);
+begin
+   if (key = Chr(9)) then
+     Exit;
+   if (DBGrid1.SelectedField.FieldName = DBCheckBox1.DataField) then
+   begin
+     DBCheckBox1.SetFocus;
+     SendMessage(DBCheckBox1.Handle, WM_Char, word(Key), 0);
+   end;
+end;
+
+procedure TForm1.FormShow(Sender: TObject);
+begin
+  FDQuery1.First;
+  with ClientDataSet1 do
+    begin
+      CreateDataSet;
+       open;
+      while not FDQuery1.Eof do
+      begin
+      Append;
+      ClientDataSet1nome.AsString := FDQuery1DESCRICAO.AsString;
+      ClientDataSet1winner.Value  := False;
+      post;
+      FDQuery1.next;
+      end;
+
+    end;
+
+  DBCheckBox1.DataSource := DataSource1;
+  DBCheckBox1.DataField := 'Winner';
+  DBCheckBox1.Visible := False;
+  DBCheckBox1.Color := DBGrid1.Color;
+  DBCheckBox1.Caption := '';
+end;
+
+end.

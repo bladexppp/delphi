@@ -1,0 +1,86 @@
+unit UServicos;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ExtCtrls, Vcl.DBCtrls,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.DApt, Data.DB, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons;
+
+type
+  TFrmCadServicos = class(TForm)
+    TabCadastro: TPageControl;
+    CadServico: TTabSheet;
+    Pesquisa: TTabSheet;
+    DBNavigator1: TDBNavigator;
+    pngBotoes: TPanel;
+    pngItens: TPanel;
+    Servicos: TFDQuery;
+    dsServicos: TDataSource;
+    ServicosCOD_SERVICO: TIntegerField;
+    ServicosDESCRICAO: TStringField;
+    ServicosVLR_SERVICO: TBCDField;
+    Label1: TLabel;
+    txtCodigo: TDBEdit;
+    Label2: TLabel;
+    txtDescricao: TDBEdit;
+    Label3: TLabel;
+    txtVlr_Unitario: TDBEdit;
+    cmdNovo: TBitBtn;
+    cmdAltera: TBitBtn;
+    cmdConfirma: TBitBtn;
+    cmdCancela: TBitBtn;
+    cmdExclui: TBitBtn;
+    cmdSair: TBitBtn;
+    procedure FormCreate(Sender: TObject);
+    procedure cmdSairClick(Sender: TObject);
+     procedure Habilita(wStatus:boolean);
+    procedure FormShow(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmCadServicos: TFrmCadServicos;
+
+implementation
+
+{$R *.dfm}
+
+uses UDMDados, UFuncoes;
+
+procedure TFrmCadServicos.cmdSairClick(Sender: TObject);
+begin
+close;
+end;
+
+procedure TFrmCadServicos.FormCreate(Sender: TObject);
+begin
+  Servicos.Open();
+end;
+
+procedure TFrmCadServicos.FormShow(Sender: TObject);
+begin
+  TabCadastro.ActivePageIndex:=0;
+
+  Habilita(true);
+  cmdNovo.Setfocus
+end;
+
+procedure TFrmCadServicos.Habilita(wStatus: boolean);
+begin
+  cmdNovo.Enabled               :=wStatus;
+  cmdAltera.Enabled             :=wStatus;
+  cmdExclui.Enabled             :=wStatus;
+  cmdConfirma.Enabled           :=not wStatus;
+  cmdCancela.Enabled            :=not wStatus;
+  txtDescricao.Enabled          :=not wStatus;
+  txtVlr_unitario.Enabled       :=not wStatus;
+end;
+
+end.

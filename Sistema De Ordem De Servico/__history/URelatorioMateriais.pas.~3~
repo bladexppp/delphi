@@ -1,0 +1,27 @@
+unit URelatorioMateriais;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport;
+
+type
+  TFrmRelMateriais = class(TForm)
+    RLReport1: TRLReport;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmRelMateriais: TFrmRelMateriais;
+
+implementation
+
+{$R *.dfm}
+
+uses UDMDados, UFuncoes;
+
+end.
